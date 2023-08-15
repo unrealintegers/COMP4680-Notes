@@ -135,6 +135,11 @@ A matrix is \textbf{triangular} if all its entries above or below the main diago
 A matrix is \textbf{block diagonal} if it is diagonal and each diagonal entry is itself a matrix. \par
 A matrix is \textbf{tri-diagonal} if it has nonzero entries only on the main diagonal and the diagonals immediately above and below the main diagonal. \par
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.6\textwidth]{images/1.1}
+\end{figure}
+
 \subsubsection*{Matrix Transpose}
 Transpose, denotes as $^T$, flips a matrix over is main diagonal, i.e. if $A$ is an $m \times n$ matrix then $A^T$ is an $n \times m$ matrix. It satisfies the following properties: 
 \begin{itemize}
@@ -146,6 +151,15 @@ If a matrix $A$ satisfies $A = A^T$ we say $A$ is \textbf{symmetric}. \par
 If a matrix $A$ satisfies $A = -A^T$ we say $A$ is \textbf{anti-symmetric}. \par 
 Every square matrix $A$ can be written as the sum of a symmetric part and an anti-symmetric part: 
 \[ A = \underbrace{\frac{1}{2}\left( A + A^T \right)}_{\text{symmetric}} + \underbrace{\frac{1}{2}\left( A - A^T \right)}_{\text{anti-symmetric}} \] 
+
+\subsubsection*{Notation for Symmetric Matrices} 
+We write 
+\begin{itemize}
+    \item $\mathbb{S}^n$ for the set of symmetric $n\times n$ matrices
+    \item $\mathbb{S}^n_+ = \left\{ X \in \mathbb{S}^n \mid X \preceq 0 \right\}$ for the positive semi-definite $n\times n$ matrices  
+    \[ X \in \mathbb{S}^n_+ \Leftrightarrow z^TXz \geq 0 \text{ for all } z. \] 
+    \item $\mathbb{S}^n_{++} = \left\{ X \in \mathbb{S}^n \mid X \prec 0 \right\}$ for the positive definite $n\times n$ matrices 
+\end{itemize}
 
 \subsubsection*{Matrix Addition}
 Two matrices of the same size can be added together: we simply add the corresponding elements in each matrix. 
@@ -314,5 +328,127 @@ A probability distribution is a function that maps outcomes of an experiment to 
 The \textbf{mean} or \textbf{expected value} of a random variable is the sum of possible values weighted by their probabilities: 
 \[ \mathbb{E}[X] = \int_x x P(X = x) \di{x} \] 
 The \textbf{variance} of a random variable $X$ is $\mathbb{E}[(X - \mathbb{E}[X])^2]$. \par 
+
+\subsection{Geometric Concepts} 
+\subsubsection*{Lines} 
+A line through two points $x_1$ and $x_2$ has the equation $x = \theta x_1 + (1 - \theta) x_2$. \par 
+The \textbf{line segment} between $x_1$ and $x_2$ is the set of points $x = \theta x_1 + (1 - \theta) x_2$ for $0 \leq \theta \leq 1$. \par
+
+\subsubsection*{Affine Sets} 
+An affine set contains the line through any two distinct points in the set: if $x_1, x_2 \in S$ then $\theta x_1 + (1-\theta) x_2 \in S$. \par 
+Every affine set can be expressed as the solution set of a system of linear equations. 
+
+\subsubsection*{Convex Sets} 
+A convex set contains the line segment between any two distinct points in the set: if $x_1, x_2 \in S$ then $\theta x_1 + (1-\theta) x_2 \in S$ for $0 \leq \theta \leq 1$. \par
+Common examples: 
+\begin{itemize}
+    \item nonnegative orthant: $\mathbb{R}_+^n$ = $\left\{ x \in \mathbb{R}^n \mid x_i \geq 0 \right\}$
+    \item positive semidefinite matrices: $\mathbb{S}_+^n = \left\{ X \in \mathbb{R}^{n\times n} \mid z^TXz \geq 0, z \in \mathbb{R}^n \right\}$
+\end{itemize}
+
+\subsubsection*{Convex Combinations and Hulls} 
+A convex combination of $x_1, \ldots, x_k$ is any point of the form 
+\[ x = \theta_1x_1 + \theta_2x_2 + \ldots + \theta_kx_k \]
+where $\theta_1 + \theta_2 + \ldots + \theta_k = 1$ and $\theta_i \geq 0$ for all $i$. \par
+The convex hull of a set $S$, $\mathrm{conv}(S)$, is the set of all convex combinations of points in $S$. \par
+
+\subsubsection*{Convex Cones} 
+A \textbf{conic combination} of points $x_1$ and $x_2$ is any point of the form 
+\[ x = \theta_1 x_1 + \theta_2 x_2 \] 
+with $\theta_1, \theta_2 \geq 0$. \par 
+A cone is a set containing all non-negative multiples of its points (i.e. if $x \in C$ then $\alpha x \in C$ for all $\alpha \geq 0$). \par
+A convex cone is a set containing all conic combinations of its points. 
+
+\subsubsection*{Hyperplanes and Halfspaces} 
+A hyperplane is a set of the form $\left\{ x \mid a^Tx = b \right\}$ with $a \neq 0$. \par
+A halfspace is a set of the form $\left\{ x \mid a^Tx \leq b \right\}$ with $a \neq 0$. \par
+In the 3D case, a plane is a hyperplane while a halfspace is everything on one side of the plane. \par 
+Hyperplanes are affine and convex, and halfspaces are convex.
+
+\subsubsection*{Euclidean Balls and Ellipsoids} 
+A Euclidean ball with center $x$ and radius $r$ is a set $B(x, r) = \left\{ y \mid \norm{y - x}_2 \leq r \right\}$. \par
+An ellipsoid is a set of the form 
+\[ \left\{ y \mid (y - x)^T P^{-1} (y - x) \leq 1 \right\} \] 
+with $P \in \mathbb{S}_{++}^n$ (symmetric positive definite). \par 
+Alternatively, we can represent a ball as 
+\[ B(x, r) = \left\{ x + ru \mid \norm{u}_2 \leq 1 \right\} \] 
+and an ellipsoid as 
+\[ \left\{ x + Au \mid \norm{u}_2 \leq 1 \right\} \] 
+with $A$ a square, nonsinguar matrix. 
+
+\subsubsection*{Norm Balls and Cones} 
+A norm ball with center $x$ and radius $r$ is the set $\left\{ y \mid \norm{y - x} \leq r \right\}$. \par 
+A norm cone is the set $\left\{ (x, t) \mid \norm{x} \leq t \right\}$. 
+Norm balls and cones are convex.
+
+\subsubsection*{Polyhedra} 
+A polyhedron is the solution set of finitely many linear inequalities and equalities 
+\[ Ax \preceq b, Cx = d \] 
+where $\preceq$ is componentwise inequality. \par 
+So a polyhedron is the intersection of a finite number of halfspaces and hyperplanes. 
+Polyhedra are convex sets. 
+
+\subsubsection*{Summary of Convex Sets} 
+\begin{figure}[H]
+    \centering
+    \includegraphics{images/2.1}
+\end{figure}
+
+\subsubsection*{Property of Convex Sets} 
+We can either show a set $C$ is convex by applying the definition, or obtain $C$ using the following properties: 
+\begin{itemize}
+    \item the intersection of any number of convex sets is convex 
+    \item the image of a convex set under an affine map is convex (recall affine maps are of the form $f(x) = Ax + b$)
+    \item the preimage of a convex set under an affine map is convex
+    \item perspective functions preserve convexity: these are functions of the form 
+    \[ P(x, t) = x/t, t > 0 \] 
+    \item linear-fractional functions preserve convexity: these are functions of the form 
+    \[ f(x) = \frac{Ax + b}{c^Tx + d}, c^Tx + d > 0 \]     
+\end{itemize}
+
+\subsubsection*{Generalized Inequalities} 
+A convex cone $K \subseteq \mathbb{R}^n$ is a \textbf{proper cone} if 
+\begin{itemize}
+    \item $K$ is closed (contains its boundary)
+    \item $K$ is solid (has nonempty interior)
+    \item $K$ is pointed (contains no line)
+\end{itemize}
+Examples include, 
+\begin{itemize}
+    \item the nonnegative orthant
+    \item positive semidefinite cone $\mathbb{S}_+^n$
+    \item nonnegative polynomials on $[0, 1]$ 
+    \[ K = \left\{ x \in \mathbb{R}^n \mid x_0 + x_1t + x_2t^2 + \cdots + x_nt^n \geq 0, t \in [0, 1] \right\} \] 
+\end{itemize}
+
+A generalized inequality is a relation of the form 
+\[ x \preceq_K y \Leftrightarrow y - x \in K \] 
+and 
+\[ x \prec_K y \Leftrightarrow y - x \in \mathrm{int}(K) \] 
+where $\mathrm{int}(K)$ denotes the interior of $K$. \par 
+\begin{itemize}
+    \item In the case of the nonnegative orthant $K = \mathbb{R}^n_+$, we have componentwise inequality $x \preceq y \Leftrightarrow x_i \leq y_i$ for all $i$. 
+    \item In the case of the positive semidefinite cone $K = \mathbb{S}_+^n$, we have $X \preceq Y \Leftrightarrow Y - X \in \mathbb{S}_+^n$.
+\end{itemize}
+In these cases, we omit the subscript $K$ and write $x \preceq y$ and $X \preceq Y$. \par
+
+\subsubsection*{Minimum and Minimal Elements} 
+As $\preceq$ is not a linear order, we have to define 
+\begin{itemize}
+    \item $x \in S$ is the minimum element of $S$ with respect to $\preceq$ if $x \preceq y$ for all $y \in S$
+    \item $x \in S$ is the minimal element of $S$ with respect to $\preceq$ if there is no $y \in S$ such that $y \prec x$
+\end{itemize}
+
+\subsubsection{Separating Hyperplane Theorem} 
+If $C$ and $D$ are nonempty disjoint convex sets, there exists $a \neq 0, b$ such that 
+\[ a^Tx \leq b \text{ for } x \in C, \quad, a^Tx \geq b \text{ for } x \in D \] 
+That is, there exists a hyperplane separating any two convex sets $C$ and $D$. (Strict separation requires additional assumptions, e.g. $C$ is closed, $D$ is singleton)
+\subsubsection*{Supporting Hyperplane Theorem} 
+A supporting hyperplane to a set $C$ at a boundary point $x_0$ is 
+\[ \left\{ x \mid a^Tx = a^Tx_0 \right\}  \] 
+where $a \neq 0$ and $a^T \leq a^Tx_0$ for all $x \in C$. \par
+This can be thought of as a tangent hyperplane. \par 
+The theorem states that there exists a supporting hyperplane at any point on the boundary of a convex set. \par 
+
 
 \end{document}
