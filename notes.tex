@@ -46,7 +46,7 @@ Some common sets:
     \item $\mathbb{R}^n$ is the set of $n$-dimensional real vectors
     \item $\mathbb{R}^{m\times n}$ is the set of $m \times n$ real matrices
     \item $\mathbb{C}$ is the set of complex numbers
-    \item $\mathbb{Z}$ is the set of integera
+    \item $\mathbb{Z}$ is the set of integers
     \item $\mathbb{R}_+$ is the set of nonnegative real numbers
     \item $\mathbb{R}_{++}$ is the set of positive real numbers
     \item $\emptyset$ is the empty set 
@@ -279,7 +279,7 @@ Every nonsingular matrix $A \in \mathbb{R}^{n\times n}$ can be factored as
 \[ A = PLU \] 
 where $P$ is a permutation matrix, $L$ is unit lower triangular, and $U$ is upper triangular and non-singular. 
 \subsubsection*{Cholesky Factorization} 
-Every symetric positive definite matrix $A \in \mathbb{R}^{n\times n}$ can be factored as 
+Every symmetric positive definite matrix $A \in \mathbb{R}^{n\times n}$ can be factored as 
 \[ A = LL^T \] 
 where $L$ is lower triangular and non-singular with positive diagonal elements. 
 \subsubsection*{Singular Value Decomposition} 
@@ -394,7 +394,7 @@ Polyhedra are convex sets.
     \includegraphics{images/2.1}
 \end{figure}
 
-\subsubsection*{Property of Convex Sets} 
+\subsubsection*{Obtaining Convex Sets} 
 We can either show a set $C$ is convex by applying the definition, or obtain $C$ using the following properties: 
 \begin{itemize}
     \item the intersection of any number of convex sets is convex 
@@ -450,5 +450,870 @@ where $a \neq 0$ and $a^T \leq a^Tx_0$ for all $x \in C$. \par
 This can be thought of as a tangent hyperplane. \par 
 The theorem states that there exists a supporting hyperplane at any point on the boundary of a convex set. \par 
 
+\subsubsection*{Dual Cones and Generalized Inequalities}
+The dual cone of a cone $K$ is 
+\[ K^* = \left\{ y \mid y^Tx \geq 0 \text{ for all } x \in K \right\} \] 
+Examples: 
+\begin{itemize}
+    \item For $K = \mathbb{R}^n_+$, we have $K^* = \mathbb{R}^n_+$
+    \item For $K = \mathbb{S}_+^n$, we have $K^* = \mathbb{S}_+^n$
+    \item For $K = \left\{ (x, t) \mid \norm{x}_2 \leq t \right\}$, we have $K^* = \left\{ (x, t) \mid \norm{x}_2 \leq t \right\}$ 
+    \item For $K = \left\{ (x, t) \mid \norm{x}_1 \leq t \right\}$, we have $K^* = \left\{ (x, t) \mid \norm{x}_\infty \leq t \right\}$ 
+\end{itemize}
+We say a cone is self-dual if it is its own dual. \par 
+Dual cones of proper cones are proper, hence defining generalized inequalities: 
+\[ y \succeq_{K^*} 0 \Leftrightarrow y^Tx \geq 0 \text{ for all } x \succeq_K 0 \] 
+
+We can define minimum and minimal elements using these dual inequalities: 
+\begin{itemize}
+    \item $x$ is the minimum element of $S$ iff for all $\lambda \succ_{K^*} 0$, $x$ is the unique minimizer of $\lambda^Tz$ over $S$
+    \item $x$ is a minimal element of $S$ if it minimizes $\lambda^Tz$ for some $\lambda \succ_{K^*} 0$
+    \item if $x$ is a minimal element of a convex set $S$, then there exists a nonzero $\lambda \succeq_{K^*} 0$ such that $x$ minimizes $\lambda^Tz$ over $S$
+\end{itemize}
+
+\newpage
+\section{Convex Functions} 
+A function $f: \mathbb{R}^n \rightarrow \mathbb{R}$ is convex if $\mathrm{dom} f$ is convex and 
+\[ f(\theta x + (1 - \theta)y) \leq \theta f(x) + (1-\theta) f(y) \] 
+for all $x, y \in \mathrm{dom} f$ and $0 \leq \theta \leq 1$. \par
+
+\begin{itemize}
+    \item $f$ is concave if $-f$ is convex
+    \item $f$ is strictly convex if the inequality holds strictly
+    \item $f$ is strongly convex if it has minimum positive curvature everywhere
+\end{itemize}
+For example, all affine functions and norms on $\mathbb{R}^n$ are convex. \par 
+
+A function $f: \mathbb{R}^n \rightarrow \mathbb{R}$ is convex if and only if the function $g: \mathbb{R} \rightarrow \mathbb{R}$ defined by $g(t) = f(x+tv)$ is convex for any $x \in \mathrm{dom} f$, $v \in \mathbb{R}^n$. That is, a function $f$ is convex if and only if it is convex on every line.
+
+\subsection{Extended-value Extension} 
+The extended-value extension $\tilde{f}$ of $f$ is 
+\[ \tilde{f}(x) = \begin{cases} 
+    f(x), & x \in \mathrm{dom}f \\
+    \infty, & x \notin \mathrm{dom}
+\end{cases}. \] 
+This simplifies our definition of convexity, the requirement that the domain is convex is no longer needed.
+
+\subsection{First-order condition} 
+$f$ is differentiable if $\mathrm{dom} f$ is open and the gradient 
+\[ \nabla f(x) = \left( \pp[f(x)]{x_1}, \pp[f(x)]{x_2}, \ldots, \pp[f(x)]{x_n} \right) \] 
+exists at each $x \in \mathrm{dom} f$. \par 
+If $f$ is differentiable with convex domain, $f$ is convex iff 
+\[ f(y) \geq f(x) + \nabla f(x)^T(y-x) \text{ for all } x, y \in \mathrm{dom}f. \] 
+(First-order/linear approximation is an underestimate)
+
+\subsection{Second-order conditions} 
+$f$ is twice differentiable if $\mathrm{dom}f$ is open and the hessian $\nabla^2 f(x) \in \mathbb{S}^n$ 
+\[ \nabla^2 f(x)_{ij} = \frac{\partial^2 f(x)}{\partial x_i \partial x_j} \] 
+exists at each $x \in \mathrm{dom}f$ for $i,j = 1, \ldots, n$. \par 
+If $f$ is twice differentiable with convex domain, $f$ is convex iff $\nabla^2 f(x) \succeq 0$ for all $x \in \mathrm{dom}f$. \par
+Furthermore, if $\nabla^2 f(x) \succ 0$ then $f$ is strictly convex, while if $\nabla^2 f(x) \succ nI$ for some $n > 0$, then $f$ is strongly convex. 
+
+\subsection{Epigraph and Sublevel set}
+The $\alpha$-sublevel set of $f: \mathbb{R}^n \rightarrow \mathbb{R}$ is 
+\[ C_\alpha = \left\{ x \in \mathrm{dom}f \mid f(x) \leq a \right\}. \] 
+Sublevel sets of convex functions are convex. \par 
+The epigraph of $f: \mathbb{R}^n \rightarrow \mathbb{R}$ is 
+\[ \mathrm{epi} f = \left\{ (x, t) \in \mathbb{R}^{n+1} \mid f(x) \leq t \right\}. \] 
+$f$ is convex iff $\mathrm{epi}f$ is convex. 
+
+\subsection{Jensen's Inequality} 
+If $f$ is convex, then 
+\[ f(\mathbb{E}[z]) \leq \mathbb{E}[f(z)] \] 
+for any random variable $z$. \par 
+When $z$ is a point distribution at $x$ and $y$, we obtain our convexity condition 
+\[ f(\theta x + (1-\theta) y) \leq \theta f(x) + (1-\theta)f(y). \] 
+
+\subsection{Obtaining Convex Functions} 
+We can show a function $f$ is convex using the definition, by applying some conditions above, or use the following properties: 
+\begin{itemize}
+    \item $\alpha f$ is convex if $f$ is convex with $\alpha \geq 0$ 
+    \item if $f_1, f_2$ are convex, $f_1 + f_2$
+    \item $f(Ax+b)$ is convex if $f$ is convex
+    \item if $f_1, f_2$ are convex, $\mathrm{max}(f_1, f_2)$ is convex
+    \item if $f(x, y)$ is convex, $\mathrm{sup}_y f(x, y)$ is convex
+    \item if $g, h$ are convex and $\tilde{h}$ is nondecreasing in each argument, $h \circ g$ is convex
+    \item if $f(x, y)$ is convex and $C$ is convex, $\mathrm{inf}_{y \in C} f(x, y)$ is convex
+    \item if $f$ is convex, $g(x, t) = tf(x/t)$ is convex
+\end{itemize}
+
+\subsection{The Conjugate Function} 
+The conjugate of a function $f$ is 
+\[ f^*(y) = \mathrm{sup}_x (y^Tx - f(x)). \] 
+The conjugate of a function is always convex. 
+
+\subsection{Types of Convexity} 
+\subsubsection*{Quasiconvexity} 
+A function $f: \mathbb{R}^n \rightarrow \mathbb{R}$ is quasiconvex if $\mathrm{dom}f$ is convex and the sublevel sets 
+\[ S_\alpha = \left\{ x \in \mathrm{dom}f \mid f(x) \leq a \right\} \] 
+are convex for all $\alpha$. \par 
+Alternatively, $f$ satisfies 
+\[ f(\theta x + (1-\theta)y) \leq \mathrm{max}\{ f(x), f(y) \}. \] 
+
+We define $f$ as quasiconcave if $-f$ is quasiconvex, and $f$ as quasilinear if it's both quasiconvex and quasiconcave. \par 
+First order condition: if $f$ is differentiable with convex domain, $f$ is quasiconvex iff 
+\[ f(y) \leq f(x) \Rightarrow \nabla f(x)^T(y-z) \leq 0. \] 
+
+\subsubsection*{Log Convexity} 
+A positive function $f$ is log-concave if $\log f$ is concave: 
+\[ f(\theta x + (1-\theta) y) \geq f(x)^\theta f(y)^{1-\theta}. \] 
+$f$ is log-convex if $\log f$ is convex. \par 
+
+\begin{itemize}
+    \item if $f$ is twice differentiable then it is log-concave iff 
+    \[ f(x) \nabla^2f(x) \succeq \nabla f(x) \nabla f(x)^T \] 
+    for all $x$. 
+    \item the product of log-concave functions is log-concave 
+    \item if $f: \mathbb{R}^n \times \mathbb{R}^m \rightarrow \mathbb{R}$ is log-concave, then 
+    \[ g(x) = \int f(x, y) \di{y} \] 
+    is log-concave. (For example, we can apply this to the convolution formula.)
+\end{itemize}
+
+\subsubsection*{Convexity with respect to Generalized Inequalities} 
+$f: \mathbb{R}^n \rightarrow \mathbb{R}^m$ is $K$-convex if $\mathrm{dom} f$ is convex and 
+\[ f(\theta x + (1-\theta)y) \preceq_K \theta f(x) + (1-\theta) f(y). \] 
+
+\newpage 
+\section{Convex Optimization} 
+Recall: the general optimization problem has the form \\
+minimize $f_0(x)$ subject to $f_i(x) \leq 0$ and $h_i(x) = 0$. \par 
+The $f_i$ and $h_i$ are called \textbf{explicit constraints}, and introduce \textbf{implicit constraints} restricting $x$ to the domain of each $f_i, h_i$. We say a problem is \textbf{unconstrained} if there are no explicit constraints. \par 
+
+A point $x$ is \textbf{feasible} if $x \in \mathrm{dom} f_0$ and it satisfies the constraints. A \textbf{solution} or \textbf{optimal point}, $x^*$ has the smallest value of $f_0$ among all feasible $x$. \par 
+We may also solve \textbf{feasibility problems} where $f_0 = 0$, and our goal is to find any feasible $x$. \par 
+
+The \textbf{optimal value} of the problem is 
+\[ p^* = \mathrm{inf}_{x \in \mathrm{dom}f_0} \left\{ f_0(x) \mid f_i(x) \leq 0, h_i(x) = 0 \right\}. \] 
+\begin{itemize}
+    \item $p^* = f_0(x^*)$ when $x^*$ exists
+    \item $p^* = \infty$ if the problem is infeasible
+    \item $p^* = -\infty$ if the problem is unbounded below
+\end{itemize}
+
+A point $x$ is \textbf{locally optimal} if there is an $R > 0$ such that $z = x$ is optimal with the additional constraint $\norm{z-x}_2 \leq R$. \par 
+
+We say an optimization problem is \textbf{convex} if $f_0, f_i$ are convex and $h_i$ are affine. If the objective function $f_0$ is \textbf{quasiconvex}, we say the problem is quasiconvex. \par 
+Any local optimal point of a convex optimization problem is globally optimal.
+
+\subsection{Optimality Criteria} 
+If $f_0$ is differentiable, then $x$ is optimal iff $\nabla f_0(x)^T(y-x) \geq 0$ for all feasible $y$. \par 
+For example: 
+\begin{itemize}
+    \item For an unconstrained problem, $x$ is optimal iff $\nabla f_0(x) = 0$
+    \item For an equality constrained problem (i.e. subject to $Ax=b$), $x$ is optimal iff $\nabla f_0(x) + A^T\lambda = 0$ for some $\lambda$
+    \item If we want to minimize $f_0$ subject to $x \succeq 0$, $x$ is optimal iff $\nabla f_0(x)$ is nonnegative in the $i$-th component when $x_i = 0$ and zero otherwise
+\end{itemize}
+
+\subsection{Equivalent Problems} 
+Two problems are equivalent if the solution of one is readily obtained from the solution of the other, and vice versa. Some common transformations that preserve convexity are:
+\begin{itemize}
+    \item Eliminating equality constraints, we can replace an equality constraint $Ax = b$ with the solution $x = Fz + x_0$ where $x_0$ is a particular solution and the columns of $F$ span $\mathcal{N}(A)$. Then, we may write the problem to minimize $f_0(Fz + x_0)$. 
+    \item Introducing equality constraints, converse to the above.
+    \item Introducing slack variables for linear inequalities, we can replace an inequality constraint $a^Tx \leq b$ with $a^Tx + s = b$ and $s \geq 0$.
+    \item Epigraph form, we can replace the objective minimize $f_0(x)$ with minimizing $t$ with constraint $f_0(x) - t \leq 0$. 
+    \item Variable reduction, we can replace the problem minimize $f_0(x_1, x_2)$ with minimize $g(x)$ with $g(x) = \mathrm{inf}_{x_2} f_0(x_1, x_2)$.
+\end{itemize}
+
+\subsection{Convex representation of Quasiconvex objective function} 
+If $f_0$ is quasiconvex, there exists a family of functions $\phi_t$ such that $\phi_t$ is convex in $x$ for fixed $t$, and 
+\[ f_0(x) \leq t \Leftrightarrow \phi_t(x) \leq 0. \] 
+Then, we can solve a convex feasibility problem,
+\[ \phi_t(x) \leq 0, f_i(x) \leq 0, Ax=b \] 
+where we can conclude either $t \geq p^*$ (feasible) or $t \leq p^*$ (infeasible). 
+
+\subsubsection*{Chebyshev Center}
+The Chebyshev center of 
+\[ \mathcal{P} = \left\{ x \mid a_i^Tx \leq b_i \right\} \] 
+is the center of the largest inscribed ball 
+\[ \mathcal{B} = \left\{ x_c + u \mid \norm{u}_2 \leq r \right\}. \] 
+
+
+\subsection{Families of Convex optimization problems}
+\subsubsection*{Linear Program} 
+A linear program is an optimization problem of the form 
+\[ \text{minimize } c^Tx \text{ subject to } Gx \preceq h, Ax = b. \]
+\begin{itemize}
+    \item Convex problem with affine objective and constraint functions 
+    \item Feasible set is a polyhedron
+    \item There always exists a solution at a vertex
+\end{itemize}
+For example, the diet problem of minimizing costs $c_j$ of $n$ food each with nutritional value $a_{ij}$ of nutrient $i$, subject to at least $b_i$ of nutrient $i$ has the form 
+\[ \text{minimize } c^Tx \text{ subject to } Ax \succeq b. \] 
+
+\subsubsection*{Linear-fractional Program} 
+A linear-fractional program is an optimization problem of the form
+\[ \text{minimize } \frac{c^Tx + d}{e^Tx + f} \text{ subject to } Gx \preceq h, Ax=b. \]
+This is a quasiconvex optimization problem which can be solved by bisection, and equivalent to a linear program 
+\[ \text{minimize } c^Ty + dz \text{ subject to } Gy \preceq hz, Ay=bz, e^Ty + fz = 1, z \geq 0. \] 
+
+A generalized linear-fractional program has the form 
+\[ f_0(x) = \mathrm{max} \frac{c_i^Tx + d_i}{e_i^Tx + f_i} \] 
+which is also a quasiconvex optimization problem and can be solved by bisection.
+
+\subsubsection*{Quadratic Program} 
+A quadratic program is an optimization problem of the form 
+\[ \text{minimize } \frac{1}{2}x^TPx + q^Tx + r \text{ subject to } Gx \preceq h, Ax=b. \]
+
+For example, least squares and curve fitting are quadratic programs, and so is a linear program with random cost (minimize $\mathbb{E}[c^Tx] + \gamma\mathbb{V}[c^Tx]$ where $\gamma$ is a risk parameter). 
+
+\subsubsection*{Quadratically Constrained Quadratic Program}
+A quadratically constrained quadratic program is an optimization problem of the form
+\[ \text{minimize } \frac{1}{2}x^TP_0x + q_0^Tx + r_0 \text{ subject to } \frac{1}{2}x^TP_ix + q_i^Tx + r_i \leq 0, i = 1, \ldots, m, Ax=b. \] 
+
+\subsubsection*{Second-order Cone Program}
+A second-order cone program is an optimization problem of the form
+\[ \text{minimize } f^Tx \text{ subject to } \norm{A_ix + b_i}_2 \leq c_i^Tx + d_i, i = 1, \ldots, m, Fx = g. \] 
+where $A_i \in \mathbb{R}^{n_i \times n}, F \in \mathbb{R}^{p \times n}$. \par 
+\begin{itemize}
+    \item The inequalities are called second-order cone constraints: $(A_ix + b_i, c_i^Tx + d_i)$ is a second-order cone on $\mathbb{R}^{n_i+1}$
+    \item When $n_i = 0$, it reduces to LP; if $c_i = 0$ it reduces to QCQP. 
+\end{itemize}
+
+\subsubsection*{Robust Linear Programming}
+The parameters in optimization problems are often uncertain, there are two common approaches: 
+\begin{itemize}
+    \item Deterministic model: constraints holds for all $a_i$ in a small neighbourhood around the true value: i.e. the constraints are $a_i^Tx \leq b_i$ for all $a_i \in \mathcal{E}_i$. 
+    \item Stochastic model: $a_i$ is a random variable, and the constraints must hold with some probability $\eta$. 
+\end{itemize} 
+
+The deterministic model can be converted to a SOCP by defining 
+\[ \mathcal{E}_i = \left\{ \obar{a}_i + P_iu \mid \norm{u}_2 \leq 1 \right\}. \] 
+Then, we can convert the constraint to $\obar{a}_i^Tx + \norm{P_i^Tx}_2 \leq b_i$. \par 
+
+The stochastic model can be converted to a SOCP by converting the constraint to $\obar{a}_i^Tx + \Phi^{-1}(\eta)\norm{\sigma_ix}_2 \leq b_i$, where $\Phi$ is the standard normal CDF, and $\sigma_i$ is the standard deviation. 
+
+\subsubsection*{Geometric Program}
+A \textbf{monomial} function is a function of the form 
+\[ f(x) = cx_1^{a_1}x_2^{a_2}\cdots x_n^{a_n} \] 
+defined on $\mathbb{R}^n_{++}$. \par
+A \textbf{posynomial} function is a sum of monomials. \par 
+A geometric program is an optimization problem of the form 
+\[ \text{minimize } f_0(x) \text{ subject to } f_i(x) \leq 1, h_i(x) = 1 \] 
+with $f_i$ posynomial and $h_i$ monomial. \par 
+We can convert geometric programs to convex problems by taking the logarithm of the objective and constraints, and then solving the resulting convex problem.
+
+\subsubsection*{Generalized Inequality Constraints} 
+We can have optimization problems with generalized inequality constraints, for example a constraint of the form $f_i(x) \preceq_K 0$ where $K$ is a proper cone. \par
+Specifically, the conic form problem has affine objective and constraints takes the form 
+\[ \text{minimize } c^Tx \text{ subject to } Fx+g \preceq_K 0, Ax=b \] 
+extends linear programming to nonpolyhedral cones.
+
+\subsubsection*{Semidefinite Program}
+A semidefinite program is an optimization problem of the form 
+\[ \text{minimize } c^Tx \text{ subject to } x_1F_1 + x_2F_2 + \cdots + x_nF_n \preceq 0, Ax=b. \] 
+
+The inequality constraint is called linear matrix inequality (LMI). \par 
+Only one LMI constraint is needed, as we can combine smaller matrices $M_1, M_2$ into a block diagonal matrix $\mathrm{diag}(M_1, M_2)$. \par 
+
+We can convert LP and SOCP to SDP as follows: 
+\begin{itemize}
+    \item The LP constraint $Ax \preceq b$ is equivalent to $\mathrm{diag}(Ax - b) \preceq 0$. 
+    \item The SOCP constraint $\norm{A_ix + b_i}_2 \leq c_i^Tx + d_i$ is equivalent to 
+    \[ \begin{pmatrix}
+        (c_i^Tx + d_i)I & A_ix + b_i \\
+        (A_ix + b_i)^T & c_i^Tx + d_i
+    \end{pmatrix} \succeq 0 \] 
+    by Schur complement.
+\end{itemize}
+
+\subsubsection*{Eigenvalue Minimization}
+The eigenvalue minimization problem asks to minimize the maximum eigenvalue of $A(x) = A_0 + x_1A_1 + \cdots + x_nA_n$. \par 
+
+This is equivalent to the SDP 
+\[ \text{minimize } t \text{ subject to } A(x) \preceq tI. \] 
+
+\subsubsection*{Matrix Norm Minimization}
+The matrix norm minimization problem asks to minimize $\norm{A(x)}_2$ where $A(x) = A_0 + x_1A_1 + \cdots + x_nA_n$. \par
+
+This is equivalent to the SDP 
+\[ \text{minimize } t \text{ subject to } \begin{pmatrix}
+    tI & A(x) \\
+    A(x)^T & tI 
+\end{pmatrix} \succeq 0. \]
+
+\subsubsection*{Vector Optimization}
+In a vector optimization problem, we say a point $x$ is 
+\begin{itemize}
+    \item \textbf{optimal} if $f_0(x)$ is the minimum value of all feasible $x$
+    \item \textbf{Pareto optimal} if $f_0(x)$ is a minimal value of all feasible $x$
+\end{itemize}
+
+In particular, we can have multicriterion objective functions of the form $f_0 = (F_1, \ldots, F_q)$. Then,
+\begin{itemize}
+    \item $x^*$ is optimal if 
+    \[ y \text{ feasible } \Rightarrow f_0(x^*) \preceq f_0(y) \] 
+    \item $x^{\text{po}}$ is Pareto optimal if 
+    \[ y \text{ feasible }, f_0(y) \preceq f_0(x^{\text{po}}) \Rightarrow f_0(x^{\text{po}}) = f_0(y) \] 
+\end{itemize}
+
+To find Pareto optimal points, we can convert this to a scalar problem by choosing $\lambda \succ_{K^*} 0$ and writing the objective as $\lambda^Tf_0(x)$. \par 
+If $x$ is optimal for the scalar problem, then it is Pareto optimal for the vector problem. \par
+We can find almost all Pareto optimal points by varying $\lambda$. \par 
+In the case of multicriterion problems, $\lambda$ is a set of weightings for $F_1, \ldots, F_q$. 
+\newpage 
+
+\section{Duality} 
+Every optimization problem has a corresponding dual problem, whose optimal value is a lower bound on the optimal value of the primal problem. \par
+
+Take a general optimization problem of the form 
+\[ \text{minimize } f_0(x) \text{ subject to } f_i(x) \leq 0, h_i(x) = 0. \]
+The Lagrangian is 
+\[ L(x, \lambda, \nu) = f_0(x) + \sum_{i=1}^m \lambda_i f_i(x) + \sum_{i=1}^p \nu_i h_i(x). \]
+The Lagrange dual function is
+\[ g(\lambda, \nu) = \mathrm{inf}_{x \in \mathrm{dom}f_0} L(x, \lambda, \nu). \]
+Here, $g$ is concave, and $g(\lambda, \nu) \leq f_0(x)$ for all $x$ feasible. \par
+
+\subsection{The Dual Problem} 
+The Lagrange dual problem is to maximize $g(\lambda, \nu)$ subject to $\lambda \succeq 0$. \par
+
+This finds the best lower bound on $p^*$, the optimal value of the primal problem. \par
+
+\subsection{Strong and Weak Duality} 
+Weak Duality is the condition that $d^* \leq p^*$, which holds for any dual problem. This can be used to find nontrivial lower bounds to problems. \par 
+Strong Duality is the condition that $d^* = p^*$, which (usually) holds for convex problems. There are conditions called \textbf{constraint qualifications} that guarantee strong duality on convex problems. 
+
+\subsubsection*{Slater's Constraint Qualification}
+Strong duality holds for a convex problem if it is strictly feasible, i.e. for the problem 
+\[ \text{minimize } f_0(x) \text{ subject to } f_i(x) \leq 0, Ax=b \] 
+we require 
+\[ x \in \mathrm{int} \mathcal{D}: f_i(x) < 0, Ax = b. \] 
+
+This also guarantees that the dual optimum is attained. \par 
+
+\subsubsection*{Karush-Kuhn-Tucker Conditions}
+The KKT conditions are: 
+\begin{enumerate}[label=\arabic*.]
+    \item Primal Feasible: $f_i(x) \leq 0, h_i(x) = 0$, 
+    \item Dual Feasible: $\lambda \succeq 0$,
+    \item Complementary Slackness: $\lambda_i f_i(x) = 0$,
+    \item Gradient of Lagrangian vanishes: 
+    \[ \nabla f_0(x) + \sum_{i=1}^m \lambda\nabla f_i(x) + \sum_{i=1}^p \nu_i\nabla h_i(x) = 0 \] 
+\end{enumerate}
+If $x, \lambda, \nu$ satisfy the KKT conditions for a convex problem, then they must be optimal. 
+
+\subsubsection*{Reformulating Problems and Duality} 
+Sometimes, we can reformulate a problem to make the dual problem easier to solve or more interesting. \par 
+
+For example, the optimization problem to minimize $f_0(Ax + b)$ has a constant dual function. Instead, we can write the problem as 
+\[ \text{minimize } f_0(y) \text{ subject to } y = Ax + b. \] 
+ 
+\subsubsection*{Problems with Generalized Inequalities} 
+Given a problem of the form 
+\[ \text{minimize } f_0(x) \text{ subject to } f_i(x) \preceq_{K_i} 0, h_i(x) = 0, \]
+the Lagrange multiplier $f_i(x) \preceq_{K_i} 0$ is a vector $\lambda_i \in \mathbb{R}^{k_i}$. So, the Lagrangian is 
+\[ L(x, \lambda_1, \ldots, \lambda_m, \nu) = f_0(x) + \sum_{i=1}^m \lambda_i^T f_i(x) + \sum_{i=1}^p \nu_ih_i(x) \] 
+and the dual function is defined similarly. \par 
+If each $\lambda_i \succeq_{K_i^*} 0$, then $g(\lambda_1, \ldots, \lambda_m, \nu) \leq p^*$. 
+
+\newpage 
+\section{Applications in Machine Learning} 
+\subsection{Norm Approximation} 
+The problem to minimize $\norm{Ax - b}$ can be interpreted as: 
+\begin{itemize}
+    \item Geometric: find the closest point in $\mathcal{R}(A)$ to $b$
+    \item Estimation: if we have a model $y = Ax + v$ where $y$ are measurements, $x$ is unknown and $v$ is noise, we can find the best estimate of $x$ given $y = $
+    \item Optimal design: if $x$ are design variables and $Ax$ is result, we can find the design that best approximates the desired result $b$
+\end{itemize}
+
+\subsection{Penalty Function Approximation} 
+The problem is to minimize $\phi(r_1) + \ldots + \phi(r_n)$ subject to $r = Ax - b$. \par 
+There are many choices for $\phi$: 
+\begin{itemize}
+    \item Quadratic ($\phi(u) = u^2$)
+    \item Deadzone-linear ($\phi(u) = \mathrm{max}\{ 0, \abs{u} - \epsilon \}$) with width $\epsilon$
+    \item Log-barrier ($\phi(u) = -a^2\log (1 - (u/a)^2)$) defined on $\abs{u} < a$ and is $\infty$ otherwise. 
+    \item Huber Penalty Function: 
+    \[ \phi_{\text{hub}}(u) = \begin{cases}
+        u^2, &\abs{u} \leq M \\ 
+        M(2\abs{u} - M), &\abs{u} > M
+    \end{cases} \]
+    less sensitive to outliers.  
+\end{itemize}
+
+\subsection{Least-norm Problems} 
+The problem to minimize $\norm{x}$ subject to $Ax = b$ can be interpreted as 
+\begin{itemize}
+    \item Geometric: find the closest point in the affine set $\left\{ x \mid Ax = b \right\}$ to the origin
+    \item Estimation: $b = Ax$ are measurements of $x$, find the smallest (most plausible) estimate consistent with measurements
+    \item Design: $x$ are design variables, $b$ are required results, find the smallest (most efficient) design that satisfies the requirements 
+\end{itemize} 
+
+\subsection{Regularized Approximation} 
+The problem to minimize $(\norm{Ax - b}, \norm{x})$ can be interpreted as 
+\begin{itemize}
+    \item Estimation: linear model $y = Ax + v$, with prior knowledge that $x$ is small
+    \item Design: small $x$ is cheaper or more efficient, or $y = Ax$ is only valid for small $x$
+    \item Robust Approximation: good approximation $Ax \approx b$ is less sensitive to errors in $A$ than approximation with large $x$
+\end{itemize}
+
+\subsubsection*{Scalarized Problem}
+We can parametrize the problem as to minimize $\norm{Ax - b} + \gamma \norm{x}$. When $\gamma > 0$, the solution traces out the optimal tradeoff curve. \par 
+
+Alternatively in Tikhonov Regularization, we aim to minimize 
+\[ \norm{Ax - b}_2^2 + \delta \norm{x}_2^2 \] 
+can be solved as a least-squares problem: 
+\[ \text{minimize} \quad \norm{\begin{pmatrix}
+    A \\ \sqrt{\delta}I
+\end{pmatrix} x - \begin{pmatrix}
+    b \\ 0
+\end{pmatrix}}_2^2 \] 
+to get solution $x^* = (A^TA + \delta I)^{-1}A^Tb$. 
+
+\subsection{Minimum Volume Ellipsoid Around a Set} 
+The Lowner-John ellipsoid of a set $C$ is the minimum volume ellipsoid $\mathcal{E}$ s.t. $C \subseteq \mathcal{E}$. 
+\begin{itemize}
+    \item We can parametrize $\mathcal{E}$ as $\mathcal{E} = \left\{ v \mid \norm{Av + b}_2 \leq 1 \right\}$ and assume $A \in \mathbb{S}_{++}^n$
+    \item The volume is proportional to $\det A^{-1}$, so we can minimize $\log \det A^{-1}$ subject to $C \subseteq \mathcal{E}$.
+\end{itemize}
+This generates a convex problem but evaluating the constraint can be hard. \par 
+If $C$ is finite then the constraint is much simpler. 
+
+\subsection{Maximum Volume Inscribed Ellipsoid}
+\begin{itemize}
+    \item We parametrize $\mathcal{E} = \left\{ Bu + d \mid \norm{u}_2 \leq 1 \right\}$ and assume $B \in \mathbb{S}_{++}^n$
+    \item The volume is proportional to $\det B$, so we can maximize $\log \det B$ subject to $\mathcal{E} \subseteq C$.
+\end{itemize}
+This generates a convex problem but evaluating the constraint can be hard. \par
+Once again, if $C$ is finite then the constraint is much simpler. \par 
+
+If $C \subseteq \mathbb{R}^n$ and if we shrink the Lowner-John ellipsoid by a factor of $n$, it is contained in $C$. \par
+Similarly, if we expand the maximum volume inscribed ellipsoid by a factor of $n$, it contains $C$. \par
+
+\subsection{Centers} 
+\begin{itemize}
+    \item Chebyshev center (center of largest inscribed ball), can be found by LP
+    \item MVE (center of maximum volume inscribed ellipsoid)
+    \item Analytic Center: for a problem 
+    \[ f_i(x) \leq 0, i = 1, \ldots, m, Fx = g \] 
+    it is computed as the optimal point of 
+    \begin{align*}
+        \text{minimize} \quad & -\sum_{i=1}^m \log (-f_i(x)) \\
+        \text{subject to} \quad & Fx = g
+    \end{align*}
+    This is not a property of the set, the same set can have different analytic centers. We can express the inner and outer ellipsoids in terms of the analytic center: 
+    \begin{align*}
+        \mathcal{E}_{\mathrm{inner}} &= \left\{ x \mid (x - x_{\mathrm{ac}})^T \nabla^2\phi(x_{\mathrm{ac}})(x - x_{\mathrm{ac}}) \leq 1 \right\} \\ 
+        \mathcal{E}_{\mathrm{inner}} &= \left\{ x \mid (x - x_{\mathrm{ac}})^T \nabla^2\phi(x_{\mathrm{ac}})(x - x_{\mathrm{ac}}) \leq m(m-1) \right\} \\ 
+    \end{align*}
+\end{itemize}
+
+\subsection{Maximum Likelihood Estimation} 
+Suppose we are tasked with estimating a probability density $p_\theta(y)$ of some variable from data $y_1, \ldots, y_m$. \par
+The maximum likelihood principle says we should choose the parameters that result in the highest probability of making these observations, in other words we maximize $\log p_\theta(y)$. 
+\begin{itemize}
+    \item $l(\theta) = \log p_\theta(y)$ is called the log-likelihood function
+    \item usually decomposes over samples, $l(\theta) = \sum_{i=1}^m \log p_\theta(y_i)$
+    \item if $p_\theta$ is log-concave then the problem is convex
+\end{itemize}
+
+Say we have a model $y = Ax + v$ where $x$ is unknown, $y$ are measurements and $v$ is noise. \par
+Then, we wish to maximize 
+\[ l(x) = \sum_{i=1}^m \log p(y_i - a_i^Tx) \] 
+
+\subsection{Binary Classification Problem} 
+Say we have training data $\mathcal{D} = \left\{ (x_i, y_i) \right\}_{i=1}^N$, where $x_i \in \mathbb{R}^n$ and $y_i \in \left\{ 0, 1 \right\}$. We want to learn a density function $\mathbb{P}(y \mid x)$ that estimates the probability of $0$ or $1$ for an input. \par 
+Our classifier will be of the form $f(x) = a^Tx + b$ with the sign being taken as the classification. \par 
+
+For example, we can use logistic regression, where we assume $y$ has distribution 
+\[ \mathbb{P}(y = 1 \mid x) = \frac{\exp(a^Tx + b)}{1 + \exp(a^Tx + b}. \] 
+The log-likelihood function is 
+\begin{align*}
+    l(a, b; \mathcal{D}) &= \log \left( \prod_{i:y_i=1} \frac{\exp(a^Tx_i + b)}{1 + \exp(a^Tx_i + b)} \prod_{i:y_i=0} \frac{1}{\exp(a^Tx_i + b)} \right) \\
+    &= \sum_{i:y_i=1} (a^Tx_i + b) - \sum_{i=1}^m \log (1 + \exp(a^Tx_i + b))
+\end{align*}
+which is concave in $a$ and $b$. \par 
+
+\subsubsection*{Reguarization}
+To minimize overfitting we use regularization, 
+\[ a^*, b^* = \mathrm{argmax}_{a, b} l(a, b) - \lambda r(a, b) \] 
+where $\lambda$ controls regularization strength. 
+
+\subsection{Support Vector Machines} 
+Given training data $\mathcal{D}$ as before, we wish to find $a,  b$ subject to $a^Tx_i + b < 0$ for $y_i = -1$ and $a^Tx_i + b > 0$ for $y_i = 1$. \par
+
+We can define the geometric margin of $(a, b)$ with respect to $\mathcal{D}$ to be 
+\[ \gamma_i = y_i \left( \frac{1}{\norm{a}}a^Tx_i + \frac{b}{\norm{a}} \right) \] 
+and $\gamma = \min \gamma_i$. ($\gamma < 0$ if we are wrong, and $\gamma > 0$ if we're right). \par
+
+We can aim to write this as an optimization problem 
+\begin{align*}
+    \text{maximize} \quad & \gamma \\
+    \text{subject to} \quad & y_i \left( \frac{1}{\norm{a}}a^Tx_i + \frac{b}{\norm{a}} \right) \geq \gamma
+\end{align*}
+but unfortunately this is very hard to solve because of the $\norm{a}$ in the denominator. \par
+
+Instead, we can make the substitution $\gamma = \frac{\gamma'}{\norm{a}}$ and so the problem becomes
+\begin{align*}
+    \text{maximize} \quad & \gamma' \\
+    \text{subject to} \quad & y_i \left( a^Tx_i + b \right) \geq \gamma'
+\end{align*}
+where we can scale such that $\gamma' = 1$. \par
+
+Finally, we notice that maximizing $\norm{a}^{-1}$ is the same as minimizing $\norm{a}^2$. So, we can write the problem as
+\begin{align*}
+    \text{minimize} \quad & \frac{1}{2} \norm{a}^2 \\
+    \text{subject to} \quad & y_i \left( a^Tx_i + b \right) \geq 1
+\end{align*}
+This is the primal SVM problem and it is a quadratic program. \par 
+
+If we find $a^*$ we can obtain $b^*$ as 
+\[ b^* = -\frac{1}{2} \left( \max\limits_{i:y_i=-1} \langle a^*, x_i \rangle + \min_{i:y_i=1} \langle a^*, x_i \rangle \right). \] 
+
+We can introduce Lagrange multipliers $\alpha_i$ for each inequality constraint 
+\[ \mathcal{L}(a, b, \alpha) = \frac{1}{2}\norm{a}^2 - \sum_{i=1}^m \alpha_i (y_i(a^Tx_i + b) - 1). \] 
+Taking derivatives we have 
+\begin{align*}
+    \nabla_a \mathcal{L}(a, b, \alpha) = a - \sum_{i=1}^m y_i\alpha_ix_i = 0 &\Rightarrow a = \sum_{i=1}^m y_i\alpha_ix_i \\
+    \pp{b} \mathcal{L}(a, b, \alpha) = \sum_{i=1}^m y_i\alpha_i = 0 &\Rightarrow \sum_{i=1}^m y_i\alpha_i = 0 
+\end{align*}
+
+We can substitute back to get the dual SVM optimization problem: 
+\[ \text{maximize } -\frac{1}{2} \sum_{i,j=1}^m y_iy_j \langle x_i, x_j \rangle \alpha_i \alpha_j + \sum_{i=1}^m \alpha_i \quad \text{subject to} \quad \alpha_i \geq 0, \sum_{i=1}^m y_i\alpha_i = 0 \] 
+
+Here, we can make predictions using 
+\begin{align*}
+    f(x) &= a^Tx + b \\ 
+    &= \left( \sum_{i=1}^m \alpha_iy_ix_i \right)^Tx + b \\
+    &= \sum_{i=1}^m \alpha_iy_i \langle x_i, x \rangle + b
+\end{align*}
+
+\subsubsection*{The Kernel Trick}
+Sometimes we wish to learn the classifier with respect to some higher-dimensional features $\phi(x)$. \par
+
+Let $K$ denote the kernel corresponding to inner products in the higher-dimensional feature space, i.e. 
+\[ K(x, z) = \phi(x)^T\phi(z) \] 
+Now we can replace $\langle k, z \rangle$ with $K(x, z)$ everywhere.
+
+\subsubsection*{Regularization}
+We can add regularization to the SVM if the data contains outliers or is not linearly separable. \par
+
+We can add slack variables $\xi_i$ to the primal problem to allow for misclassification:
+\begin{itemize}
+    \item $\xi_i \geq 0$ and the constraint becomes $y_i(a^Tx_i + b) \geq 1 - \xi_i$
+    \item the objective becomes $\frac{1}{2}\norm{a}^2 + C\sum_{i=1}^m \xi_i$ where $C$ is a regularization parameter
+    \item the dual problem has constraints $0 \leq \alpha_i \leq C$
+\end{itemize}
+
+\subsubsection*{Sequential-Minimal-Optimization Algorithm} 
+The SMO algorithm operates by starting with a feasible point $\alpha$, and performing coordinate ascent on the dual SVM objective by 
+\begin{itemize}
+    \item Picking a pair of training examples $(p, q)$ 
+    \item Solving the optimization problem with respect to $\alpha_p$ and $\alpha_q$ while keeping all other $\alpha_i$ fixed. 
+\end{itemize}
+These updates can be computed very efficiently. \par 
+
+We need to change the constraint such that $\alpha_py_p + \alpha_qy_q = c$ is constant. \par
+
+Then, we can write $\alpha_p = y_p(c - \alpha_qy_q)$ and the problem is 
+\[ \text{maximize } a\alpha_q^2 + b \alpha_q + c \quad \text{subject to} \quad L \leq \alpha_q \leq H. \] 
+Let $a^\dagger = \arg \max_\alpha a\alpha^2 + b\alpha + c$. Then 
+\[ \alpha_q^* = \begin{cases}
+    H, &\alpha^\dagger > H \\
+    \alpha^\dagger, & L \leq \alpha^\dagger \leq H \\
+    L, &\alpha^\dagger < L
+\end{cases} \] 
+and $\alpha_p^* = y_p(c - \alpha_q^*y_q)$. \par
+ 
+\newpage 
+\section{Unconstrained Minimization} 
+Assume the problem is to minimize $f(x)$, a convex, twice continuously differentiable function with a finite infimum. \par 
+
+We start at a point $x_0$ such that the sublevel set of $x_0$ is closed, which is often derived by showing that all sublevel sets are closed: 
+\begin{itemize}
+    \item If $\mathrm{epi} f$ is closed, or 
+    \item If $\mathrm{dom} f = \mathbb{R}^n$, or 
+    \item If $f(x) \rightarrow \infty$ as $x$ approaches the boundary of $\mathrm{dom} f$. 
+\end{itemize}
+
+\subsection{Strong Convexity} 
+We can simplify the problem when $f$ is strongly convex on $S$: 
+\begin{itemize}
+    \item $f(y) \geq f(x) + \nabla f(x)^T(y - x) + \frac{\mu}{2}\norm{y - x}_2^2$ for all $x, y \in S$, so $S$ is bounded 
+    \item $p^* > -\infty$ and for $x \in S$, 
+    \[ f(x) - p^* \leq \frac{1}{2\mu} \norm{\nabla f(x)}_2^2 \] 
+    can be used as a stopping criterion.
+\end{itemize}
+
+\subsection{Backtracking Line Search} 
+To find the minima of $f(x + t\delta x)$, we can use an efficient algorithm where we start with $t = 1$ and repeatedly set $t = \beta t$ until 
+\[ f(x + t\delta x) < f(x) + \alpha t \nabla f(x)^T \delta x \] 
+
+\subsection{Direction of Descent} 
+There are a few options for choosing $\delta x$: 
+\begin{itemize}
+    \item Gradient Descent: $\delta x = -\nabla f(x)$
+    \item Steepest Descent: pick $\delta x$ to minimize $\nabla f(x)^T \delta x$ subject to $\norm{\delta x} = 1$, sometimes unnormalized by multiplying with $\norm{\nabla f(x)}_*$
+    \item Newton Step: $\delta x = -\nabla^2 f(x)^{-1} \nabla f(x)$ (minimizes second-order approximation), can be solved by Cholesky factorization
+\end{itemize}
+
+\subsection{Stopping Condition} 
+The Newton decrement 
+\[ \lambda(x)^2 = \nabla f(x)^T \nabla^2 f(x)^{-1} \nabla f(x) \] 
+is a measure of the proximity of $x$ to $x^*$. 
+
+\subsection{Newton's Method} 
+Newton's method uses the Newton step as the direction of descent, and the Newton decrement as a stopping condition. \par
+
+\subsection{Classical Convergence Analysis} 
+Assume $f$ is strongly convex on $S$ with constant $\mu$ and $\nabla^2 f$ is Lipschitz continuous on $S$, meaning 
+\[ \norm{\nabla^2 (x) - \nabla^2 f(y)}_2 \leq L \norm{x - y}_2. \] 
+Then, there exist constants $\eta \in (0, \mu^2/L)$ and $\gamma > 0$ such that 
+\begin{itemize}
+    \item If $\norm{\nabla f(x)}_2 \geq \eta$, then $f(x_{k+1}) - f(x_k) \leq -\gamma$ 
+    \item If $\norm{\nabla f(x)}_2 < \eta$, then 
+    \[ \frac{L}{2\mu^2} \norm{\nabla f(x_{k+1})}_2 \leq \left( \frac{L}{2\mu} \norm{\nabla f(x_k)}_2 \right)^2. \] 
+\end{itemize}
+
+The first phase is called the damped Newton phase, and each step the function value decreases by at least $\gamma$. So, it ends after at most $\frac{f(x_0) - p^*}{\gamma}$ iterations. \par 
+The second phase, the quadratically convergent phase, is where the function value decreases quadratically and 
+\[ \frac{L}{2\mu^2} \norm{\nabla f(x_l)}_2 \leq \frac{1}{2}^{2^l}. \] 
+
+So, the number of iterations needed until $f(x) - p^* \leq \varepsilon$ is bounded above by 
+\[ \frac{f(x_0) - p^*}{\gamma} + \log_2\log_2 (\varepsilon_0 / \varepsilon) \] 
+where $\varepsilon_0$ is constant depending on $m, L, x_0$. \par
+In practice, the second phase is negligible and can be ignored.
+
+\newpage 
+\section{Equality Constrained Minimization} 
+Assume the problem is to minimize $f(x)$ subject to $Ax = b$, where $f$ is convex and twice continuously differentiable. \par
+Then, $x^*$ is optimal if and only if there exists $\nu^*$ such that 
+\begin{align*}
+    \nabla f(x^*) + A^T\nu^* &= 0 \\ 
+    Ax^* &= b
+\end{align*}
+In the quadratic case where $f(x) = \frac{1}{2}x^TPx + q^Tx + r$, we have 
+\[ \begin{bmatrix}
+    P & A^T \\ A & 0
+\end{bmatrix} \begin{bmatrix}
+    x^* \\ \nu^*
+\end{bmatrix} = \begin{bmatrix}
+    -q \\ b
+\end{bmatrix} \] 
+which is called the KKT system. \par
+The KKT matrix is nonsingular if and only if 
+\[ Ax = 0, x \neq 0 \Rightarrow x^TPx > 0 \] 
+or equivalently $P + A^TA \succeq 0$. 
+
+\subsection{Eliminating Equality Constraints} 
+Alternatively, we can rewrite the problem as a problem to minimize $f(Fz + \hat{x})$ with $\hat{x}$ a particular solution and $F$ a basis for the nullspace of $A$. \par
+
+\subsection{Newton's Method for Equality Constrained Minimization}
+We can compute the newton step using the KKT system, 
+\[ \begin{bmatrix}
+    \nabla^2 f(x) & A^T \\ A & 0
+\end{bmatrix} \begin{bmatrix}
+    v \\ w 
+\end{bmatrix} = \begin{bmatrix}
+    -\nabla f(x) \\ 0
+\end{bmatrix}. \] 
+We can then compute the Newton decrement as 
+\[ \lambda(x) = (-\nabla f(x)^T \delta x)^{1/2}. \] 
+
+Newton's method proceeds as before. \par 
+
+We can also extend this to infeasible points by solving the KKT system as 
+\[ \begin{bmatrix}
+    \nabla^2 f(x) & A^T \\ A & 0 
+\end{bmatrix} \begin{bmatrix}
+    \delta x \\ \delta \nu 
+\end{bmatrix} = - \begin{bmatrix}
+    \nabla f(x) + A^T\nu \\ Ax - b
+\end{bmatrix}. \] 
+where $r = (f(x) + A^T\nu, Ax - b)$ is the residual. \par
+Then, we can apply Newton's method by first minimizing the residual at each step, then minimizing the objective. \par
+
+\subsection{Solving KKT Systems} 
+For a KKT system of the form 
+\[ \begin{bmatrix}
+    H & A^T \\ A & 0
+\end{bmatrix} \begin{bmatrix}
+    v \\ w
+\end{bmatrix} = - \begin{bmatrix}
+    g \\ h
+\end{bmatrix} \] 
+
+We can solve this by:
+\begin{itemize}
+    \item $LDL^T$ factorization
+    \item Elimination (if $H$ is nonsingular) 
+    \[ AH^{-1}A^Tw = h - AH^{-1}g, Hv = -(g + A^Tw) \] 
+    \item Elimination (if $H$ is singular), we write it as 
+    \[ \begin{bmatrix}
+        H + A^TQA & A^T \\ A & 0
+    \end{bmatrix} \begin{bmatrix}
+        v \\ w
+    \end{bmatrix} = - \begin{bmatrix}
+        g + A^TQh \\ h
+    \end{bmatrix} \] 
+    with $Q \succeq 0$ for which $H + A^TQA \succ 0$, and apply elimination. 
+\end{itemize}
+
+\subsection{Network Flow Optimization} 
+\[ \text{minimize } \sum_{i=1}^n \phi_i(x_i) \quad \text{subject to } Ax=b. \] 
+This is a directed graph with $n$ arcs and $p+1$ nodes, $x_i$ is the flow through arc $i$, and $\phi_i$ is the cost function for arc $i$ (with $\phi''_i(x) > 0$). \par 
+
+$A$ is the node-arc incidence matrix (with the last row removed), where $A_{ij} = 1$ if arc $i$ leaves node $j$, $A_{ij} = -1$ if arc $i$ enters node $j$, and $A_{ij} = 0$ otherwise. $b$ is the reduced source vector. \par 
+
+Here, the KKT system has $H$ diagonal, so we can solve it by elimination. \par
+
+\subsection{Analytic Center of Linear Matrix Inequality} 
+\[ \text{minimize } -\log\det X \quad \text{subject to } \mathrm{tr}(A_iX) = b_i, i = 1, \ldots, p \] 
+with variable $X \in \mathbb{S}^n$. \par 
+
+The optimality conditions are 
+\[ X^* \succ 0, -(X^*)^{-1} + \sum_{j=1}^p \nu_j^* A_i = 0, \mathrm{tr}(A_iX^*) = b_i, \] 
+and we can derive the Newton equation 
+\[ X^{-1}\delta X X^{-1} + \sum_{j=1}^p w_jA_i = X^{-1}, \mathrm{tr}(A_i\delta X) = 0, \] 
+which follows from the linear approximation $(X + \delta X)^{-1} \approx X^{-1} - X^{-1}\delta XX^{-1}$. \par 
+
+We can solve by 
+\begin{itemize}
+    \item Eliminating $\delta X$ in the first equation by $\delta X = X - \sum_{j=1}^p w_jXA_jX$
+    \item Substituting $\delta X$ in the second equation 
+    \[ \sum_{j=1}^p \mathrm{tr}(A_iXA_j X) w_j = b_i \] 
+    which is a positive definite linear system with variable $w \in \mathbb{R}^p$. 
+\end{itemize}
+
+\newpage 
+\section{Inner Point Methods} 
+For an inequality constrained minimization problem 
+\[ \text{minimize } f_0(x) \quad \text{subject to } f_i(x) \leq 0, Ax = b, i = 1, \ldots, m, \] 
+with $f_i$ convex and twice continuously differentiable, $A \in \mathbb{R}^{p \times n}$ with $\mathrm{rank}(A) = p$, $p^*$ is finite and attained, and that the problem is strictly feasible: there exists an $x$ on the interior of the feasible set. \par
+
+\subsection{Log Barrier} 
+We can reformulate inequality constrained problems via an indicator function $I_{\mathbb{R}_-}$ which is $0$ if $x \leq 0$ and $\infty$ otherwise. \par 
+However this is non-differentiable, so we can use the log barrier function as an approximation, the problem becomes 
+\[ \text{minimize } f_0(x) - \frac{1}{t} \sum_{i=1}^m \log(-f_i(x)) \quad \text{subject to } Ax = b \] 
+for some $t > 0$. We can increase $t$ to improve the approximation. \par
+
+The set of solutions can be expressed in terms of $t$, and the set of solutions $x^*(t)$ is often called the central path. \par 
+
+\subsection{Dual Points on Central Path} 
+$x = x^*(t)$ if there exists a $w$ such that 
+\[ t \nabla f_0(x) + \sum_{i=1}^m \frac{1}{-f_i(x)} \nabla f_i(x) + A^Tw = 0, Ax = b \] 
+so $x^*(t)$ minimizes the Lagrangian 
+\[ L(x, \lambda^*(t), \nu^*(t)) = f_0(x) + \sum_{i=1}^m \lambda_i^*(t)f_i(x) + \nu^*(t)^T(Ax - b) \] 
+where we define $\lambda_i^*(t) = 1/(-t f_i(x^*(t)))$ and $v^*(t) = w/t$. \par 
+This can also be understood via the KKT conditions, 
+\begin{enumerate}[label=(\alph*)]
+    \item Primal Constraints: $f_i(x) \leq 0, Ax = b$
+    \item Dual Constraints: $\lambda \succeq 0$
+    \item Approximate Complementary Slackness: $-\lambda_i f_i(x) = 1/t$
+    \item Gradient of Lagrangian Vanishes: 
+    \[ \nabla f_0(x) + \sum_{i=1}^m \nabla f_i(x) + A^T\nu = 0. \] 
+\end{enumerate}
+
+\subsection{Phase I Methods} 
+First, we find a strictly feasible $x$ (inequalities must be strict). \par 
+A basic method is to solve the problem 
+\[ \text{minimize } s \quad \text{subject to } f_i(x) \leq s, Ax = b. \] 
+If we find $s < 0$, then $x$ is strictly feasible. \par 
+
+\subsubsection*{Sum of Infeasibilities}
+We can also solve the problem 
+\[ \text{minimize }\vec{1}^Ts \quad \text{subject to } s \succeq 0, f_i(x) \leq s_i, Ax = b. \] 
+
+\subsection{Barrier Method} 
+Given a strictly feasible $x, t := t_0 > 0$, $\mu > 1$ and tolerance $\varepsilon > 0$, repeat:
+\begin{enumerate}[label=\arabic*.]
+    \item Compute $x^*(t)$ by minimizing $tf_0 + \phi$ subject to $Ax = b$
+    \item Update $x = x^*(t)$
+    \item Until $m/t < \varepsilon$
+    \item Set $t = \mu t$
+\end{enumerate}
+
+\subsubsection*{Convergence} 
+The number of outer (centering) iterations is exactly 
+\[ \left\lceil\frac{\log\left(\frac{m}{\varepsilon t_0}\right)}{\log\mu}\right\rceil \] 
+plus the initial centering step. \par 
+The centering problem to minimize $tf_0(x) + \phi(x)$ is a convex problem, so we can use Newton's method to solve it. \par
+
+\subsection{Generalized Inequalities} 
+Suppose now our inequalities take the form $f_i(x) \preceq_{K_i} 0$ where $K_i$ is a proper cone. \par
+
+For generalized inequalities, we can define a generalized logarithm $\psi: \mathbb{R}^q \rightarrow \mathbb{R}$ over a proper cone $K \subseteq \mathbb{R}^q$ as 
+\begin{itemize}
+    \item $\mathrm{dom} \psi = \mathrm{int} K$ and $\nabla^2 \psi(y) \prec 0$ for $y \succ_K 0$, 
+    \item $\psi(sy) = \psi(y) + \theta \log s$ for $y \succ_K 0$ and $s > 0$, where $\theta$ is called the degree of $\psi$
+\end{itemize}
+
+For example, over $\mathbb{S}_+^n$ we have $\psi(Y) = \log \det Y$. \par 
+
+Some properties of this logarithm are: 
+\begin{itemize}
+    \item $\nabla \psi(y) \succeq_{K^*} 0$
+    \item $y^T\nabla\psi(y) = \theta$ 
+\end{itemize}
+
+Then, we can define the log barrier for generalized inequalities similarly, as 
+\[ \phi(x) = - \sum_{i=1}^m \psi_i(-f_i(x)) \] 
+with $\psi_i$ being the generalized logarithm for $K_i$. Then we define the central path similarly. \par 
+
+We may run the barrier method similarly, with stopping criterion $\sum \theta_i / t < \varepsilon$, where $\theta_i$ is the degree of $\psi_i$. The number of iterations is then 
+\[ \left\lceil \frac{\log\left( (\sum \theta_i) / (\varepsilon t_0) \right)}{\log \mu} \right\rceil. \] 
+
+\newpage 
+\section{Deep Learning} 
+Deep learning involves using machine learning to optimize other machine learning parameters. That is, we wish to minimize $\sum L(f_\theta(x), y)$ for a model $f_\theta$ and loss function $L$. This objective is often nonconvex. \par
+
+\subsection{Multilayer Perceptron} 
+This is a basic feedforward neural network, where we have input $x \in \mathbb{R}^{p_0}$, hidden layers $z_i \in \mathbb{R}^{p_i}$ and output $y \in \mathbb{R}^{p_n}$. The layers compute as 
+\[ z_i = \tilde{f_i}(z_{i-1}) = f_i(A_iz_{i-1} + b_i) \] 
+where $f_i$ is a non-linear activation function. \par
+The network can then be viewed as a composition 
+\[ y = (\tilde{f_n} \circ \cdots \circ \tilde{f_2} \circ \tilde{f_1})(x). \] 
+
+\subsubsection*{Activation Functions} 
+There are a few common activation functions:
+\begin{itemize}
+    \item Logistic function: $f(x) = 1 / (1 + \exp(-x))$
+    \item Hyperbolic tangent: $f(x) = \tanh(x) = (\exp(2x) - 1)(\exp(2x) + 1)$
+    \item Rectified linear unit (ReLU): $f(x) = \max(0, x)$
+\end{itemize}
+
+\subsubsection*{Backpropagation}
+Suppose we wish to compute $\pp[L]{a_i}$ for some $a_i$, and we have $\pp[L]{z_{i+1}}$. Then we can use the chain rule to compute 
+\[ \pp[L]{a_i} = \pp[L]{z_{i+1}}\pp[z_{i+1}]{a_i} \] 
+and use the definition $z_{i+1} = f_{i+1}(A_{i+1}z_i + b_{i+1})$ to compute $\pp[z_{i+1}]{a_i}$. \par
+
+Then, we can propagate gradients backwards through the network. 
+
+\subsection{Automatic Differentiation} 
+Automatic differentiation is an algorithm to produce code for computing derivatives of a function specified by a computer program. We assume the program is composed of a small set of elementary functions. \par
+
+There are two ways to do this:
+\begin{itemize}
+    \item Forward Mode: We propagate results on the first-order approximation $x + \delta x$ of the input $x$ through the program.
+    \item Reverse Mode: We compute the derivative based on the chain rule while reusing computations where possible.
+\end{itemize}
+
+To compute the gradient in either case, we use numerical approximation methods. Many traditional methods like Newton's method are too expensive, so we often use stochastic gradient descent instead to approximate the gradient on a sample of the data. 
+
+\subsection{Universal Approximation Theorem}
+Let $f$ be an activation function and $g$ be any continuous function. Then there exists $A \in \mathbb{R}^{m \times n}$ and $b, c \in \mathbb{R}^m$ such that 
+\[ \hat{g}(x) = c^T f(Ax + b) \] 
+approximates $g(x)$ everywhere. \par
+However, it turns out that the number of hidden units needed to approximate $g$ grows exponentially with the dimension of $x$.
+
+\subsection{Convolutional Neural Networks} 
+A CNN is a neural network that takes an image ($3 \times W \times H$ tensor) and performs successive layers of 
+\begin{itemize}
+    \item Convolution, $(x * a)_{st} = \sum_{i,j} x_{s-i, t-j}a_{ij} + b$
+    \item Non-linear transform, e.g. ReLU
+    \item Pooling/downsampling, e.g. $z_{st} = \mathrm{max}\left\{ x_{ij} \mid i, j \in \mathcal{N}_{st} \right\}$. 
+\end{itemize}
+The final layers are often fully connected layers, similar to MLPs. 
+
+\subsection{Recurrent Neural Networks} 
+A recurrent neural network uses the partial output of a network back into itself to give a recurrent network, such as 
+\[ (y_t, h_t) = f(x_t, h_{t-1}). \] 
+We can train recurrent networks by unrolling the network to a given time and back-propagating through time, such as 
+\begin{align*}
+    (y_t, h_t) &= f(x_t, h_{t-1}; \theta) \\
+    (t_{t-1}, h_{t-1}) &= f(x_{t-1}, h_{t-2}; \theta) \\ 
+    \vdots \\
+    (y_1, h_1) &= f(x_1, h_0; \theta)
+\end{align*}
+Then we can again use the chain rule to compute $\pp[L]{\theta}$. \par 
 
 \end{document}
