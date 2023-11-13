@@ -2,7 +2,7 @@
 \usepackage{std}
 
 \title{COMP4680 Notes}
-\author{Jeff Li}
+\author{Advanced Topics in Machine Learning: Optimization}
 \date{2023 S2}
 
 \begin{document}
@@ -1315,5 +1315,109 @@ We can train recurrent networks by unrolling the network to a given time and bac
     (y_1, h_1) &= f(x_1, h_0; \theta)
 \end{align*}
 Then we can again use the chain rule to compute $\pp[L]{\theta}$. \par 
+
+\newpage 
+\section{Differential Optimization} 
+Take Stackelberg games, where we have a leader and a follower, where the market determines a price based on the combined supply of both players, and each player sequentially chooses some quantity to supply to maximize their profit. \par
+In other words, the leader picks the supply knowing that the follower will pick optimally. If $P$ is the demand function, $C_1, C_2$ are the cost functions and $q_1, q_2$ are the quantities supplied, then the leader solves 
+\begin{align*}
+    \text{maximize}~& q_1 P(q_1 + q_2) - C_1(q_1) \\ 
+    \text{subject to}~&q_2 \in \mathrm{argmax}_q qP(q_1 + q) - C_2(q).
+\end{align*}
+This is a simple example of a bi-level optimisation problem. A general bi-level optimisation problem is
+\begin{align*}
+    \text{minimize}~&L(x, y; \theta) \\ 
+    \text{subject to}~&y \in \mathrm{argmin}_u f(x, u; \theta).
+\end{align*}
+To use gradient descent, we need to first compute the gradient of the lower-level solution, then use chain rule.
+
+\subsection{Parametrized Optimization} 
+We may have a problem of the form 
+\begin{align*}
+    \text{minimize}~&f(x, u) \\
+    \text{subject to}~&h_i(x, u) = 0 \\
+    &g_j(x, u) \leq 0
+\end{align*}
+where $x \in \mathbb{R}^n$ are parameters. Assume $f$ is differentiable but not necessarily convex. 
+
+\subsection{Imperative vs Declarative Nodes} 
+We may think of two types of nodes in a computational graph:
+\begin{itemize}
+    \item Imperative nodes gives an explicit input-output relations, like in most of our previous examples
+    \item Declarative nodes have the input-output relationship specified by an optimization problem
+\end{itemize}
+
+For example, we may have a node in the problem of average pooling for finding the centroid of a set of points: 
+\begin{itemize}
+    \item Implicitly, $y = \frac{1}{n}\sum_{i=1}^n x_i$
+    \item Declaratively, we may have $y = \mathrm{argmin}_u \sum_{i=1}^n \norm{x_i - u}^2$
+\end{itemize}
+where the declarative specification may be useful if we wish to use a different loss function. \par
+To compute the gradient of the declarative node, there are a few methods.
+\subsubsection*{Unrolling Gradient Descent} 
+We repeat $y_t \leftarrow y_{t-1} - \eta \pp[f]{y}(x, y_{t-1})$ until convergence. And the gradient is 
+\[ \dd[y_t]{x} = \pp[y_t]{x} + \pp[y_t]{y_{t-1}}\dd[y_{t-1}]{x} = -\eta \frac{\partial^2 f}{\partial x\partial y}(x, y_{t-1}) + \left( I - \eta\pn[f]{2}{y}(x, y_{t-1}) \right) \dd[y_{t-1}]{x}. \] 
+
+\subsubsection*{Dini's Implicit Function Theorem}
+Consider the solution mapping associated with the equation $f(x, u) = 0$, 
+\[ Y: x \mapsto \left\{ u \in \mathbb{R}^m \mid f(x, u) = 0 \right\}. \] 
+We are interested in how elements of $Y(x)$ change as a function of $x$. \par 
+\emph{Theorem. Let $f: \mathbb{R}^n \times \mathbb{R}^m \rightarrow \mathbb{R}^m$ be differentiable in a neighbourhood of $(x, u)$ and such that $f(x, u) = 0$, and let $\pp{u}f(x, u)$ be nonsingular. Then the solution mapping $Y$ has a single-valued localization $y$ around $x$ for $u$ which is differentiable in a neighbourhood $\mathcal{X}$ of $x$ with Jacobian satisfying 
+\[ \dd[y(x)]{x} = -\left( \pp[f(x, y(x))]{y} \right)^{-1} \pp[f(x, y(x))]{x} \] 
+for every $x \in \mathcal{X}$.}
+
+\subsection{Differentiating Unconstrained Optimization Problems} 
+Let $f: \mathbb{R} \times \mathbb{R} \rightarrow \mathbb{R}$ be twice differentiable and let $y(x) \in \mathrm{argmin}_u f(x, u)$. Then if the Hessian is nonzero, 
+\[ \dd[y(x)]{x} = -\left( \pn[f]{2}{y} \right)^{-1} \frac{\partial^2 f}{\partial x\partial y}. \] 
+
+\subsection{Differentiating Equality Constrained Optimization Problems}
+Consider functions $f: \mathbb{R}^n \times \mathbb{R}^m \rightarrow \mathbb{R}$ and $h: \mathbb{R}^n \times \mathbb{R}^m \rightarrow \mathbb{R}^q$. Let $y(x) \in \mathrm{argmin}_u f(x, u)$ subject to $h(x, u) = 0$. \par
+Assume that $y(x)$ exists, $f$ and $h$ are twice differentiable in the neighbourhood of $(x, y(x))$, and that $\mathrm{rank}(\pp[h(x, y)]{y}) = q$. Then for $H$ non-singular 
+\[ \dd[y(x)]{x} = H^{-1}A^T (AH^{-1}A^T)^{-1} (AH^{-1}B-C) - H^{-1}B \] 
+where $A = \pp[h(x, y)]{y}$, $B = \frac{\partial^2 f(x, y)}{\partial x\partial y} - \sum_{i=1}^q \nu_i \frac{\partial^2 h_i(x, y)}{\partial x\partial y}$, $C = \pp[h(x, y)]{x}$ and $H = \pn[f(x, y)]{2}{y} - \sum_{i=1}^q \nu_i \pn[h_i(x, y)]{2}{y}$, and $\nu \in \mathbb{R}^q$ satisfies $\nu^TA = \pp[f(x, y)]{y}$.
+
+\subsection{Inequality Constraints} 
+There are two main ways to deal with inequality constraints:
+\begin{itemize}
+    \item We may replace inequalities with log-barrier functions
+    \item We may treat them as equality constraints if they are active, and ignore them otherwise 
+\end{itemize}
+
+\subsection{Applications} 
+\subsubsection{Differentiable Least Squares} 
+We need the solution to the least squares problem is $x^* = (A^TA)^{-1}A^Tb$. We can compute the gradient of this as 
+\[ \dd[x^*]{A_{ij}} = \dd{A_{ij}} (A^TA)^{-1}A^Tb \] 
+and we can obtain 
+\[ \left( \dd[L]{A} \right)^T = wr^T - x^*(Aw)^T \] 
+where $w^T = v^T(A^TA)^{-1}$ and $r^T = b^T - x^*A^T$. \par
+
+\subsubsection{Differentiable Eigendecomposition}
+Finding the eigenvector corresponding to the maximum eigenvalue of a real symmetric matrix $X \in \mathbb{R}^{m \times m}$ can be formulated as 
+\begin{align*}
+    \text{maximize}~&u^TXu \\
+    \text{subject to}~&u^Tu = 1
+\end{align*} 
+whose optimality conditions are $X_Y = \lambda_{\mathrm{max}}y$ and $y^Ty = 1$. \par
+Taking derivatives we get 
+\[ \dd[y]{X_{ij}} = -\frac{1}{2} (X - \lambda_{\mathrm{max}}I)^\dag (E_{ij} + E_{ji})y. \] 
+
+\subsubsection{Optimal Transport} 
+One view of optimal transport is as a matching problem: given an $m \times n$ cost matrix $M$ and a $m \times n$ probability matrix $P$ of a match occurring, we wish to 
+\begin{align*}
+    \text{minimize}~\langle M, P \rangle + \frac{1}{\gamma} \langle P, \log P \rangle \\
+    \text{subject to}~P\vec{1} = r, P^T\vec{1} = c
+\end{align*}
+where the second term is an entropic regularization term and $r$ and $c$ satisfy $\vec{1}^T r = \vec{1}^Tc = 1$. \par 
+The row and column sum constraints ensure that $P$ is a doubly stochastic matrix (lies within the convex hull of permutation matrices). \par 
+The solution takes the form 
+\[ P_{ij} = \alpha_i \beta_j e^{-\gamma M_{ij}} \] 
+and can be found using the Sinkhorn algorithm: 
+\begin{itemize}
+    \item Set $K_{ij} = e^{-\gamma M_{ij}}$ and $\alpha, \beta \in \mathbb{R}^n_{++}$,
+    \item Iterate until convergence $\alpha \leftarrow r \oslash K\beta$, $\beta \leftarrow c \oslash K^T\alpha$, where $\oslash$ denotes componentwise division,
+    \item Set $P = \mathrm{diag}(\alpha) K \mathrm{diag}(\beta)$.
+\end{itemize}
+
+For computing the gradient, we can either back-propagate through the Sinkhorn algorithm, or use implicit differentiation with chain rule.
 
 \end{document}
